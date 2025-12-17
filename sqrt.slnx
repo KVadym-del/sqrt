@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="sqrt/sqrt.vcxproj" Id="7f6d673d-311d-48b5-afa2-d0bd26cce17d" />
+</Solution>
