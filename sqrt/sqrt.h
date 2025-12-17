@@ -11,6 +11,12 @@
     #define SQRT_DEF extern
 #endif
 
+#ifdef __cplusplus
+#define CONSTEXPR constexpr
+#else
+#define CONSTEXPR
+#endif
+
 #if defined(_MSC_VER)
 #define SQRT_INLINE __forceinline
 #elif defined(__GNUC__) || defined(__clang__)
@@ -31,15 +37,15 @@ extern "C" {
     SQRT_INLINE SQRT_DEF float hw_sqrt_ss(float x);
     SQRT_INLINE SQRT_DEF double hw_sqrt_sd(double x);
 
-    SQRT_INLINE SQRT_DEF void hw_sqrt_ps(const float* input, float* output, int count);
-    SQRT_INLINE SQRT_DEF void hw_sqrt_pd(const double* input, double* output, int count);
+    CONSTEXPR SQRT_INLINE SQRT_DEF void hw_sqrt_ps(const float* input, float* output, int count);
+    CONSTEXPR SQRT_INLINE SQRT_DEF void hw_sqrt_pd(const double* input, double* output, int count);
 
     SQRT_INLINE SQRT_DEF float hw_sqrt_approx_ss(float x);
-    SQRT_INLINE SQRT_DEF void hw_sqrt_approx_ps(const float* input, float* output, int count);
+    CONSTEXPR SQRT_INLINE SQRT_DEF void hw_sqrt_approx_ps(const float* input, float* output, int count);
 
-    SQRT_INLINE SQRT_DEF float sf_sqrt(float number);
-    SQRT_INLINE SQRT_DEF unsigned int sf_sqrt_integer(unsigned int n);
-    SQRT_INLINE SQRT_DEF float sf_sqrt_approx(float number);
+    CONSTEXPR SQRT_INLINE SQRT_DEF float sf_sqrt(float number);
+    CONSTEXPR SQRT_INLINE SQRT_DEF unsigned int sf_sqrt_integer(unsigned int n);
+    CONSTEXPR SQRT_INLINE SQRT_DEF float sf_sqrt_approx(float number);
 
 #ifdef __cplusplus
 }
@@ -61,35 +67,35 @@ namespace gg_sqrt {
 
         inline float sqrt_approx(float x) { return hw_sqrt_approx_ss(x); }
 
-        inline void sqrt(std::span<const float> input, std::span<float> output) {
+        constexpr inline void sqrt(std::span<const float> input, std::span<float> output) {
             hw_sqrt_ps(input.data(), output.data(), static_cast<int>(input.size()));
         }
 
-        inline void sqrt(std::span<const double> input, std::span<double> output) {
+        constexpr inline void sqrt(std::span<const double> input, std::span<double> output) {
             hw_sqrt_pd(input.data(), output.data(), static_cast<int>(input.size()));
         }
 
-        inline void sqrt_approx(std::span<const float> input, std::span<float> output) {
+        constexpr inline void sqrt_approx(std::span<const float> input, std::span<float> output) {
             hw_sqrt_approx_ps(input.data(), output.data(), static_cast<int>(input.size()));
         }
 
-        inline void sqrt_inplace(std::span<float> data) {
+        constexpr inline void sqrt_inplace(std::span<float> data) {
             hw_sqrt_ps(data.data(), data.data(), static_cast<int>(data.size()));
         }
 
-        inline void sqrt_inplace(std::span<double> data) {
+        constexpr inline void sqrt_inplace(std::span<double> data) {
             hw_sqrt_pd(data.data(), data.data(), static_cast<int>(data.size()));
         }
 
-        inline void sqrt_approx_inplace(std::span<float> data) {
+        constexpr inline void sqrt_approx_inplace(std::span<float> data) {
             hw_sqrt_approx_ps(data.data(), data.data(), static_cast<int>(data.size()));
         }
     }
 
     namespace sf {
-        inline float sqrt(float number) { return sf_sqrt(number); }
-        inline float sqrt_integer(unsigned int n) { return sf_sqrt_integer(n); }
-		inline float sqrt_approx(float number) { return sf_sqrt_approx(number); }
+        constexpr inline float sqrt(float number) { return sf_sqrt(number); }
+        constexpr inline float sqrt_integer(unsigned int n) { return sf_sqrt_integer(n); }
+        constexpr inline float sqrt_approx(float number) { return sf_sqrt_approx(number); }
     }
 
 } /* namespace gg_sqrt */
@@ -122,7 +128,7 @@ extern "C" {
         return _mm_cvtsd_f64(out);
     }
 
-    SQRT_INLINE SQRT_DEF void hw_sqrt_ps(const float* input, float* output, int count) {
+    CONSTEXPR SQRT_INLINE SQRT_DEF void hw_sqrt_ps(const float* input, float* output, int count) {
         int i = 0;
         for (; i + 8 <= count; i += 8) {
             __m256 in_vec = _mm256_loadu_ps(&input[i]);
@@ -135,7 +141,7 @@ extern "C" {
         }
     }
 
-    SQRT_INLINE SQRT_DEF void hw_sqrt_pd(const double* input, double* output, int count) {
+    CONSTEXPR SQRT_INLINE SQRT_DEF void hw_sqrt_pd(const double* input, double* output, int count) {
         int i = 0;
         for (; i + 4 <= count; i += 4) {
             __m256d in_vec = _mm256_loadu_pd(&input[i]);
@@ -155,7 +161,7 @@ extern "C" {
         return _mm_cvtss_f32(out);
     }
 
-    SQRT_INLINE SQRT_DEF void hw_sqrt_approx_ps(const float* input, float* output, int count) {
+    CONSTEXPR SQRT_INLINE SQRT_DEF void hw_sqrt_approx_ps(const float* input, float* output, int count) {
         int i = 0;
         for (; i + 8 <= count; i += 8) {
             __m256 in_vec = _mm256_loadu_ps(&input[i]);
@@ -170,7 +176,7 @@ extern "C" {
     }
 
 
-    SQRT_INLINE SQRT_DEF float sf_sqrt(float number) {
+    CONSTEXPR SQRT_INLINE SQRT_DEF float sf_sqrt(float number) {
         if (number < 0) return -1.0f;
         if (number == 0) return 0.0f;
 
@@ -185,7 +191,7 @@ extern "C" {
         return x;
     }
 
-    SQRT_INLINE SQRT_DEF unsigned int sf_sqrt_integer(unsigned int n) {
+    CONSTEXPR SQRT_INLINE SQRT_DEF unsigned int sf_sqrt_integer(unsigned int n) {
         if (n == 0) return 0;
 
         unsigned int res = 0;
@@ -207,7 +213,7 @@ extern "C" {
         return res;
     }
 
-    SQRT_INLINE SQRT_DEF float sf_sqrt_approx(float number) {
+    CONSTEXPR SQRT_INLINE SQRT_DEF float sf_sqrt_approx(float number) {
         const float xhalf = number * 0.5f;
 
         union {
